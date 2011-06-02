@@ -1,0 +1,64 @@
+# TODO
+#   figure out daemonic setup for setting up olsrd as a daemon
+#
+Package: olsrd
+Version: 0.6.1
+Revision: 1
+###
+Source: http://www.olsr.org/releases/0.6/olsrd-%v.tar.bz2
+Source-MD5: a75fc9b6252df5b5f49f13418fafeff1
+#Source-SHA1: 1a6d00c8b48fec69353709cda7cfad7f1e260f69
+###
+DocFiles: <<
+ CHANGELOG
+ README-Olsr-Extensions
+ license.txt
+ release-howto.txt
+ valgrind-howto.txt
+<<
+###
+Maintainer: Hans-Christoph Steiner <hans@eds.org>
+HomePage: http://www.olsr.org/
+License: DFSG-Approved
+Description: Adhoc wireless mesh routing daemon
+###
+Depends: daemonic
+Build-Depends: 
+###
+CompileScript: make EXTRA_CPPFLAGS="-DOLSRD_GLOBAL_CONF_FILE='\"%p/etc/olsrd.conf\"'"
+InstallScript: <<
+ make DESTDIR=%d PREFIX=%p ETCDIR=%i/etc \
+     SBINDIR=%i/sbin LIBDIR=%i/lib DOCDIR=%i/share/doc MANDIR=%i/share/man \
+     install
+<<
+
+PostInstScript: <<
+	if [ "$1" = "configure" ]; then
+		echo "To use olsrd, edit %p/etc/olsrd.conf as root."
+		echo "Then run \`sudo daemonic enable olsrd' to activate."
+	fi
+<<
+PreRmScript: daemonic remove olsrd
+
+ConfFiles: %p/etc/olsrd.conf
+DaemonicFile: <<
+  <service>
+	<description>olsrd</description>
+	<message>OLSR adhoc wireless mesh networking daemon</message>
+	<daemon name="olsrd">
+	  <executable background="false">%p/sbin/olsrd</executable>
+	  <configfile>%p/etc/olsrd.conf</configfile>
+	</daemon>
+  </service>
+<<
+DaemonicName: olsrd
+
+###
+DescDetail: <<
+The olsr.org OLSR daemon is an implementation of the Optimized Link
+State Routing protocol. As such it allows mesh routing for any network
+equipment.  It runs on any wifi card that supports ad-hoc mode and of
+course on any ethernet device. OLSR is next to AODV one of the main
+two internet standards for mesh networks. It is widely used and well
+tested.
+<<
