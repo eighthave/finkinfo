@@ -1,0 +1,55 @@
+Package: monkeysphere
+Version: 0.28
+Revision: 1
+###
+Source: http://archive.monkeysphere.info/debian/pool/monkeysphere/m/%N/%N_%v.orig.tar.gz
+Source-MD5: f0e5fe66a9affd951e601ea5d6188972
+SourceDirectory: %N-%v
+###
+DocFiles: COPYING VERSION doc/TODO
+###
+Maintainer: Hans-Christoph Steiner <hans@eds.org>
+HomePage: http://web.monkeysphere.info
+License: DFSG-Approved
+Description: Extend OpenPGP's web of trust to OpenSSH
+###
+BuildDepends: fink (>= 0.24.12), sed, bash
+Depends: gnupg, system-perl, crypt-ssleay-pm586 | crypt-ssleay-pm588 | crypt-ssleay-pm5100, digest-sha-pm586 | digest-sha-pm588 | digest-sha-pm5100, gnupg-interface-pm586 | gnupg-interface-pm588 | gnupg-interface-pm5100, bash
+###
+CompileScript: <<
+<<
+InstallScript: <<
+    # update paths to SYS*DIRs
+    sed -i -e "s|/etc/monkeysphere|%p/etc/monkeysphere|g" \
+        %b/src/share/defaultenv \
+        %b/src/transitions/0.23 \
+        %b/man/man1/monkeysphere.1 \
+        %b/man/man8/monkeysphere-authentication.8 \
+        %b/man/man8/monkeysphere-host.8 \
+        %b/etc/monkeysphere-authentication.conf
+    sed -i -e "s|/var/lib/monkeysphere|%p/var/db/monkeysphere|g" \
+        %b/src/transitions/0.23 \
+        %b/man/man1/monkeysphere.1 \
+        %b/man/man8/monkeysphere-authentication.8 \
+        %b/man/man8/monkeysphere-host.8 \
+        %b/src/monkeysphere-host \
+        %b/src/monkeysphere-authentication \
+        %b/doc/getting-started-admin.mdwn
+    sed -i -e "s|/usr/share/monkeysphere|%p/share/monkeysphere|g" \
+        %b/src/monkeysphere-host \
+        %b/src/monkeysphere-authentication \
+        %b/src/monkeysphere
+    # fix perl shebang line to point to fink perl install
+    sed -i -e "s|^#!/usr/bin/perl -T$|#!%p/bin/perl -T|" \
+        %b/src/share/keytrans \
+        %b/src/share/checkperms
+    make DESTDIR=%d PREFIX=%p ETCPREFIX=%p install
+<<
+###
+DescDetail: <<
+SSH key-based authentication is tried-and-true, but it lacks a true Public Key
+Infrastructure for key certification, revocation and expiration. Monkeysphere
+is a framework that uses the OpenPGP web of trust for these PKI functions.  It
+can be used in both directions: for users to get validated host keys, and for
+hosts to authenticate users.
+<<
