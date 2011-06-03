@@ -10,7 +10,7 @@ Source-MD5: a75fc9b6252df5b5f49f13418fafeff1
 #Source-SHA1: 1a6d00c8b48fec69353709cda7cfad7f1e260f69
 ###
 PatchFile: %n.patch
-PatchFile-MD5: 37b1173757d09b78e272ba2ce69074da
+PatchFile-MD5: 01b8513547ba3936497d4263f4b1324a
 ###
 DocFiles: <<
  CHANGELOG
@@ -54,7 +54,7 @@ DaemonicFile: <<
 	<description>olsrd</description>
 	<message>OLSR adhoc wireless mesh networking daemon</message>
 	<daemon name="olsrd">
-	  <executable background="false">%p/sbin/olsrd</executable>
+	  <executable background="true">%p/sbin/olsrd</executable>
 	  <configfile>%p/etc/olsrd.conf</configfile>
 	</daemon>
   </service>
