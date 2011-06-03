@@ -18,6 +18,24 @@ DocFiles: <<
  license.txt
  release-howto.txt
  valgrind-howto.txt
+ lib/arprefresh/README_ARPREFRESH
+ lib/bmf/README_BMF.txt
+ lib/dot_draw/README_DOT_DRAW
+ lib/dyn_gw/README_DYN_GW
+ lib/dyn_gw_plain/README_DYN_GW_PLAIN
+ lib/httpinfo/README_HTTPINFO
+ lib/mini/README_MINI
+ lib/nameservice/README_NAMESERVICE
+ lib/pgraph/README_PGRAPH
+ lib/quagga/README_QUAGGA
+ lib/secure/README_SECURE
+ lib/txtinfo/README_TXTINFO
+ lib/watchdog/README_WATCHDOG
+ README-Olsr-Extensions
+ unmaintained/README-FreeBSD-libnet
+ unmaintained/README-Link-Quality-Fish-Eye.txt
+ unmaintained/README-Link-Quality.html
+ unmaintained/README-Olsr-Switch.html
 <<
 ###
 Maintainer: Hans-Christoph Steiner <hans@eds.org>
