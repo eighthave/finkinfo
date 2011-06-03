@@ -9,6 +9,9 @@ Source: http://www.olsr.org/releases/0.6/olsrd-%v.tar.bz2
 Source-MD5: a75fc9b6252df5b5f49f13418fafeff1
 #Source-SHA1: 1a6d00c8b48fec69353709cda7cfad7f1e260f69
 ###
+PatchFile: %n.patch
+PatchFile-MD5: 37b1173757d09b78e272ba2ce69074da
+###
 DocFiles: <<
  CHANGELOG
  README-Olsr-Extensions
@@ -23,19 +26,24 @@ License: DFSG-Approved
 Description: Adhoc wireless mesh routing daemon
 ###
 Depends: daemonic
-Build-Depends: 
+BuildDepends: fink (>= 0.24.12)
 ###
-CompileScript: make EXTRA_CPPFLAGS="-DOLSRD_GLOBAL_CONF_FILE='\"%p/etc/olsrd.conf\"'"
+CompileScript: <<
+ make EXTRA_CPPFLAGS="-DOLSRD_GLOBAL_CONF_FILE='\"%p/etc/olsrd.conf\"' \
+                      -DLIBDIR='\"%p/lib/olsrd/\"'" \
+      build_all
+<<
 InstallScript: <<
- make DESTDIR=%d PREFIX=%p ETCDIR=%i/etc \
-     SBINDIR=%i/sbin LIBDIR=%i/lib DOCDIR=%i/share/doc MANDIR=%i/share/man \
-     install
+ install -d %i/lib/olsrd
+ make DESTDIR=%d PREFIX=%p ETCDIR=%i/etc LIBDIR=%i/lib/olsrd \
+     SBINDIR=%i/sbin DOCDIR=%i/share/doc MANDIR=%i/share/man \
+     install_all
 <<
 
 PostInstScript: <<
 	if [ "$1" = "configure" ]; then
 		echo "To use olsrd, edit %p/etc/olsrd.conf as root."
-		echo "Then run \`sudo daemonic enable olsrd' to activate."
+		echo "Run \`sudo daemonic enable olsrd' to run it at startup."
 	fi
 <<
 PreRmScript: daemonic remove olsrd

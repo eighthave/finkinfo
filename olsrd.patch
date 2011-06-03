@@ -1,0 +1,12 @@
+--- olsrd-0.6.1/src/plugin_loader.c	2010-03-31 13:03:54.000000000 -0400
++++ olsrd-0.6.1/src/plugin_loader.c	2011-06-02 23:03:35.000000000 -0400
+@@ -95,7 +95,8 @@
+ 
+   OLSR_PRINTF(0, "---------- LOADING LIBRARY %s ----------\n", libname);
+ 
+-#if TESTLIB_PATH
++#ifdef __APPLE__
++  char path[256] = LIBDIR;
+   strcat(path, libname);
+   plugin->dlhandle = dlopen(path, RTLD_NOW);
+ #else
