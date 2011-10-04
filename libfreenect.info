@@ -1,18 +1,21 @@
 Package: libfreenect
-Version: 0.0.1
+Version: 0.1.1
 Revision: 1
 Homepage: http://openkinect.org
 License: GPL2+
 Maintainer: Hans-Christoph Steiner <hans@eds.org>
 #
-Source: https://download.github.com/OpenKinect-libfreenect-4a159f8.tar.gz
-Source-MD5: 15e9c9f25f4bb038617a21d666bc7303
-#Source-SHA1: 7f6c1fcb88b4cf9316429520f0ef67a768e12234
+Source: http://nodeload.github.com/OpenKinect/libfreenect/tarball/v%v
+Source-MD5: bf874e29274171a89520c80de9795cbd
+#Source-SHA1: 631c1f86fa67cccaf3157533bb9aa289b767db36
+SourceRename: OpenKinect-libfreenect-v%v-0-gdbfd4ce.tar.gz
+SourceDirectory: OpenKinect-libfreenect-dbfd4ce
 #
 BuildDepends: <<
 	cmake,
 	fink (>= 0.28),
-	pkgconfig (>= 0.23)
+	pkgconfig (>= 0.23),
+        libusb1
 <<
 Depends: %n-shlibs (= %v-%r), darwin (>= 9-1)
 BuildDependsOnly: true
@@ -23,24 +26,25 @@ CompileScript: <<
 <<
 InstallScript: <<
 	make install DESTDIR=%d
-        install_name_tool -id %p/lib/libfreenect.0.0.1.dylib \
-                          %i/lib/libfreenect.0.0.1.dylib
-        install_name_tool -id %p/lib/libfreenect_sync.0.0.1.dylib \
-                          %i/lib/libfreenect_sync.0.0.1.dylib
-        install_name_tool -id %p/lib/fakenect/libfreenect.0.0.1.dylib \
-                          %i/lib/fakenect/libfreenect.0.0.1.dylib
+        rm %i/lib/libfreenect.0.0.dylib
+        rm %i/lib/libfreenect_sync.0.0.dylib
+        rm %i/lib/fakenect/libfreenect.0.0.dylib
+        mv %i/lib/libfreenect.0.0.1.dylib %i/lib/libfreenect.0.0.dylib
+        mv %i/lib/libfreenect_sync.0.0.1.dylib %i/lib/libfreenect_sync.0.0.dylib
+        mv %i/lib/fakenect/libfreenect.0.0.1.dylib %i/lib/fakenect/libfreenect.0.0.dylib
 <<
 SplitOff: <<
 	Package: %N-shlibs
+        Depends: libusb1-shlibs
 	Files: <<
-               %p/lib/libfreenect.0.0.1.dylib
-               %p/lib/libfreenect_sync.0.0.1.dylib
-               %p/lib/fakenect/libfreenect.0.0.1.dylib
+               %p/lib/libfreenect.0.0.dylib
+               %p/lib/libfreenect_sync.0.0.dylib
+               %p/lib/fakenect/libfreenect.0.0.dylib
 	<<
 	Shlibs: <<
-		%p/lib/libfreenect.0.0.1.dylib 0.0.0 %n (>= 0.0.1-1)
-		%p/lib/libfreenect_sync.0.0.1.dylib 0.0.0 %n (>= 0.0.1-1)
-		%p/lib/fakenect/libfreenect.0.0.1.dylib 0.0.0 %n (>= 0.0.1-1)
+		%p/lib/libfreenect.0.0.dylib 0.0.0 %n (>= 0.1.1-1)
+		%p/lib/libfreenect_sync.0.0.dylib 0.0.0 %n (>= 0.1.1-1)
+		%p/lib/fakenect/libfreenect.0.0.dylib 0.0.0 %n (>= 0.1.1-1)
 	<<
 	DocFiles: APACHE20 CONTRIB GPL2 HACKING README.asciidoc
 <<
