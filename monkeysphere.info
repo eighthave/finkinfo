@@ -1,10 +1,13 @@
 Package: monkeysphere
-Version: 0.28
+Version: 0.35
 Revision: 1
 ###
 Source: http://archive.monkeysphere.info/debian/pool/monkeysphere/m/%N/%N_%v.orig.tar.gz
-Source-MD5: f0e5fe66a9affd951e601ea5d6188972
+Source-MD5: 481ac14c9fdef0ccd1944c593bd4f517
 SourceDirectory: %N-%v
+#
+#PatchFile: %n.patch
+#PatchFile-MD5: 2831acef93c6573d716b39725fa6491f
 ###
 DocFiles: COPYING VERSION doc/TODO
 ###
@@ -13,12 +16,22 @@ HomePage: http://web.monkeysphere.info
 License: DFSG-Approved
 Description: Extend OpenPGP's web of trust to OpenSSH
 ###
-BuildDepends: fink (>= 0.24.12), sed, bash
-Depends: gnupg, system-perl, crypt-ssleay-pm586 | crypt-ssleay-pm588 | crypt-ssleay-pm5100, digest-sha-pm586 | digest-sha-pm588 | digest-sha-pm5100, gnupg-interface-pm586 | gnupg-interface-pm588 | gnupg-interface-pm5100, bash
+BuildDepends: fink (>= 0.24.12), sed, bash (>= 3.2), socat, gnupg
+Depends: gnupg, perl5100-core, gnupg-interface-pm5100, crypt-openssl-bignum-pm5100, crypt-openssl-rsa-pm5100, bash (>= 3.0.0)
 ###
 CompileScript: <<
+    make
 <<
+#  -Mlib=%p/lib/perl5/5.8.8/darwin-thread-multi-2level
 InstallScript: <<
+    # fix perl shebang line to point to fink perl install
+    sed -i -e "s|^#!/usr/bin/perl -T$|#!/usr/bin/perl|" \
+        %b/src/share/keytrans \
+        %b/src/share/checkperms
+    # run tests in our special taint mode
+#    sed -i -e 's|^perl|%p/bin/perl5.8.8|' \
+#        %b/tests/basic \
+#        %b/tests/keytrans
     # update paths to SYS*DIRs
     sed -i -e "s|/etc/monkeysphere|%p/etc/monkeysphere|g" \
         %b/src/share/defaultenv \
@@ -33,16 +46,12 @@ InstallScript: <<
         %b/man/man8/monkeysphere-authentication.8 \
         %b/man/man8/monkeysphere-host.8 \
         %b/src/monkeysphere-host \
-        %b/src/monkeysphere-authentication \
-        %b/doc/getting-started-admin.mdwn
+        %b/src/monkeysphere-authentication
     sed -i -e "s|/usr/share/monkeysphere|%p/share/monkeysphere|g" \
         %b/src/monkeysphere-host \
         %b/src/monkeysphere-authentication \
         %b/src/monkeysphere
-    # fix perl shebang line to point to fink perl install
-    sed -i -e "s|^#!/usr/bin/perl -T$|#!%p/bin/perl -T|" \
-        %b/src/share/keytrans \
-        %b/src/share/checkperms
+    make test || exit
     make DESTDIR=%d PREFIX=%p ETCPREFIX=%p install
 <<
 ###
