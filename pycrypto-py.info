@@ -27,20 +27,25 @@ DescDetail: <<
 DescPackaging: Formerly maintained by Pepe Barbe <pepe.barbe@gmail.com>
 Source: http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-%v.tar.gz
 Source-MD5: c2a1404a848797fb0806f3e11c29ef15
-BuildDepends: gmp5, epydoc-py%type_pkg[python]
-Depends: python%type_pkg[python], gmp5-shlibs
+BuildDepends: gmp5
+Depends: python%type_pkg[python], gmp5-shlibs, epydoc-py%type_pkg[python]
 Replaces: pycrypto
 Provides: pycrypto
 CompileScript: <<
 	%p/bin/python%type_raw[python] setup.py build_ext --include-dirs=%p/include --library-dirs=%p/lib
 	%p/bin/python%type_raw[python] setup.py build
-        epydoc-py%type_pkg[python] --config Doc/epydoc-config
 <<
 InfoTest: TestScript: %p/bin/python%type_raw[python] setup.py test
 InstallScript: <<
 	%p/bin/python%type_raw[python] setup.py install --root=%d
-        install -d  %i/share/doc/pycrypto-py%type_pkg[python]/
-        cp -R %b/Doc/apidoc  %i/share/doc/pycrypto-py%type_pkg[python]/
+        install -d  %i/share/doc/pycrypto-py%type_pkg[python]/Doc
+        install %b/Doc/epydoc-config  %i/share/doc/pycrypto-py%type_pkg[python]/Doc
+        install %b/Doc/pycrypt.rst  %i/share/doc/pycrypto-py%type_pkg[python]/Doc
+<<
+# the doc generation relies on the modules being install, so gen them here
+PostInstScript: <<
+        cd %p/share/doc/pycrypto-py%type_pkg[python]/
+        %p/bin/epydoc-py%type_pkg[python] --config Doc/epydoc-config
 <<
 DocFiles: README TODO ACKS ChangeLog COPYRIGHT LEGAL/copy/LICENSE*
 License: OSI-Approved 
